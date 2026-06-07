@@ -146,7 +146,7 @@
                         <label>Select Network:</label>
                         <select id="networkSelect" onchange="loadHistory(); toggleAmountInput();">
                             <option value="TESTNET">🧪 Stellar Testnet (Free)</option>
-                            <option value="MAINNET">🚀 Stellar Mainnet (Real XLM)</option>
+                            <option value="MAINNET" selected>🚀 Stellar Mainnet (Real XLM)</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -154,12 +154,12 @@
                         <input type="text" id="targetWallet" placeholder="G... (Enter target address)">
                     </div>
                     
-                    <div class="input-group" id="groupAmountTestnet">
+                    <div class="input-group" id="groupAmountTestnet" style="display: none;">
                         <label>Amount (🧪 Testnet XLM):</label>
                         <input type="number" id="amountTestnet" class="input-testnet" placeholder="Example: 50 (Free Testnet Coins)">
                     </div>
                     
-                    <div class="input-group" id="groupAmountMainnet" style="display: none;">
+                    <div class="input-group" id="groupAmountMainnet">
                         <label style="color: #f1c40f;">Amount (🚀 Mainnet XLM):</label>
                         <input type="number" id="amountMainnet" class="input-mainnet" placeholder="Example: 5 (REAL XLM - USE CAUTION!)">
                     </div>
@@ -454,7 +454,11 @@
             } catch (e) {
                 alert("Network error.");
             }
-        };
+        }; // <-- INI YANG TADI KURANG SUDAH SAYA TAMBAHKAN
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            toggleAmountInput();
+        });
     </script>
 </body>
 </html>
