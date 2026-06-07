@@ -34,15 +34,18 @@ Access the live application here: [https://saweria-stellar.vercel.app](https://s
 ## 📸 Screenshots
 
 ### 1. Live Mainnet Dashboard
-![Live Mainnet Dashboard](ss-vercel-mainnet.png)
+![Live Mainnet Dashboard](<img width="1891" height="997" alt="image" src="https://github.com/user-attachments/assets/84d1bb03-76fc-4264-9d9a-d5a41162da45" />
+)
 *Description: The live deployed interface, with the default network set to Stellar Mainnet and the Smart Contract ID integrated.*
 
 ### 2. Dual Network & Friendbot Integration
-![Testnet Funding Success](ss-testnet-friendbot.png)
+![Testnet Funding Success](<img width="1898" height="1023" alt="image" src="https://github.com/user-attachments/assets/b3d978ca-07f3-40ba-9d62-113e7e0d93ac" />
+)
 *Description: Demonstration of the Testnet mode, showing a successful wallet funding operation via the integrated Stellar Friendbot.*
 
 ### 3. Transaction Success & History
-![Transaction History](ss-history.png)
+![Transaction History](<img width="1916" height="976" alt="image" src="https://github.com/user-attachments/assets/0ef8355c-e142-43f1-99a2-ec43bbcdcc2a" />
+)
 *Description: Successful tipping execution on the Stellar Network, verified by the Transaction Hash and reflected in the Recent History tab.*
 
 ---
