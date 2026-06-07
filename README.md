@@ -7,7 +7,7 @@ Built with a focus on simplicity, commercial readiness, and user experience, thi
 
 ## 📜 Mainnet Smart Contract ID
 As required for the mainnet deployment submission, below is the verified Smart Contract ID assigned to this project:
-* **Contract ID:** `CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL`
+* **Contract ID:** `Q4BLBLYFQKTRUGNZYVWYC7BTEU3LSU35`
 
 ## ✨ Features
 1. **Dual Network Capabilities:** Users can seamlessly toggle between Stellar Testnet and Mainnet. The UI dynamically isolates balances, transaction inputs, and transaction histories based on the active network selection.
