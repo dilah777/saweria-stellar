@@ -35,7 +35,8 @@ Access the live application here: [https://saweria-stellar.vercel.app](https://s
 
 ### 1. Live Mainnet Dashboard
 ![Live Mainnet Dashboard]
-<img width="1898" height="1023" alt="Screenshot 2026-06-07 214049" src="https://github.com/user-attachments/assets/5126c819-28e9-4f35-b22f-41710ef28d23" />
+<img width="1891" height="997" alt="Screenshot 2026-06-07 214031" src="https://github.com/user-attachments/assets/d193d334-574a-466a-9d29-ee70e1b211b7" />
+
 
 *Description: The live deployed interface, with the default network set to Stellar Mainnet and the Smart Contract ID integrated.*
 
