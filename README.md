@@ -48,3 +48,10 @@ Access the live application here: [https://saweria-stellar.vercel.app](https://s
 ### 2. Dual Network & Friendbot Integration
 ![Testnet Funding Success](https://github.com/user-attachments/assets/b3d978ca-07f3-40ba-9d62-113e7e0d93ac)
 *Description: Demonstration of the Testnet mode, showing a successful wallet funding operation via the integrated Stellar Friendbot.*
+
+### 3. Transaction Success & History
+![Transaction History](https://github.com/user-attachments/assets/0ef8355c-e142-43f1-99a2-ec43bbcdcc2a)
+*Description: Successful tipping execution on the Stellar Network, verified by the Transaction Hash and reflected in the Recent History tab.*
+
+---
+*Built with passion, persistence, and lots of coffee by Muhammad Guntur Sa'dillah.*
