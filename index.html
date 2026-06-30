@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web3 Tipping dApp - Stellar</title>
+    
+    <!-- LOAD STELLAR SDK SECARA GLOBAL (ANTI-ERROR & PALING STABIL) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
+    
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -195,10 +199,12 @@
     </div>
 
     <script type="module">
-        // MENGGUNAKAN JSDELIVR YANG LEBIH STABIL DIBANDING ESM.SH
+        // HANYA IMPORT FREIGHTER, KARENA STELLAR SDK SUDAH AMAN DARI <head> DI ATAS
         import * as freighterApi from 'https://cdn.jsdelivr.net/npm/@stellar/freighter-api@2.0.0/+esm';
-        import * as StellarSdk from 'https://cdn.jsdelivr.net/npm/@stellar/stellar-sdk@11.2.0/+esm';
         
+        // Panggil StellarSdk dari Window
+        const StellarSdk = window.StellarSdk;
+
         let userPublicKey = "";
         
         const serverTestnet = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
