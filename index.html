@@ -199,10 +199,10 @@
     </div>
 
     <script type="module">
-        // HANYA IMPORT FREIGHTER, KARENA STELLAR SDK SUDAH AMAN DARI <head> DI ATAS
-        import * as freighterApi from 'https://cdn.jsdelivr.net/npm/@stellar/freighter-api@2.0.0/+esm';
+        // NAMED IMPORT - Langsung panggil fungsi spesifik dari Freighter
+        import { isConnected, requestAccess, signTransaction } from 'https://cdn.jsdelivr.net/npm/@stellar/freighter-api@2.0.0/+esm';
         
-        // Panggil StellarSdk dari Window
+        // Panggil StellarSdk dari Window (Jalur Stabil)
         const StellarSdk = window.StellarSdk;
 
         let userPublicKey = "";
@@ -229,14 +229,16 @@
             errorMsg.style.display = 'none';
 
             try {
-                const isInstalled = await freighterApi.isConnected();
-                if (!isInstalled) {
+                // Menggunakan fungsi isConnected yang dipanggil langsung
+                const installed = await isConnected();
+                if (!installed) {
                     errorMsg.style.display = 'block';
                     errorMsg.innerText = "❌ Freighter extension not detected!";
                     return;
                 }
 
-                const accessResponse = await freighterApi.requestAccess();
+                // Menggunakan fungsi requestAccess yang dipanggil langsung
+                const accessResponse = await requestAccess();
                 
                 let pubKey = "";
                 if (typeof accessResponse === 'string') {
@@ -391,7 +393,8 @@
 
                 const xdr = transaction.toXDR('base64');
 
-                const signedResponse = await freighterApi.signTransaction(xdr, {
+                // Menggunakan fungsi signTransaction yang dipanggil langsung
+                const signedResponse = await signTransaction(xdr, {
                     network: freighterNetworkParam,
                     networkPassphrase: activePassphrase
                 });
