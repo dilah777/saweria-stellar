@@ -64,7 +64,6 @@
         }
         select { cursor: pointer; }
         
-        /* Tambahan styling untuk bedain warna input Testnet dan Mainnet */
         .input-testnet { border-left: 4px solid #3498db; }
         .input-mainnet { border-left: 4px solid #f1c40f; }
 
@@ -209,7 +208,6 @@
         const PASSPHRASE_TESTNET = 'Test SDF Network ; September 2015'; 
         const PASSPHRASE_MAINNET = 'Public Global Stellar Network ; September 2015';
 
-        // Fungsi baru untuk menyembunyikan/menampilkan kolom Amount yang tepat
         window.toggleAmountInput = () => {
             const network = document.getElementById('networkSelect').value;
             if (network === 'TESTNET') {
@@ -222,6 +220,7 @@
         };
 
         window.connectWallet = async () => {
+            console.log("Tombol login diklik...");
             const errorMsg = document.getElementById('walletError');
             errorMsg.style.display = 'none';
 
@@ -229,7 +228,7 @@
                 const isInstalled = await freighterApi.isConnected();
                 if (!isInstalled) {
                     errorMsg.style.display = 'block';
-                    errorMsg.innerText = "❌ Freighter extension not installed!";
+                    errorMsg.innerText = "❌ Freighter extension not detected!";
                     return;
                 }
 
@@ -253,11 +252,12 @@
                     
                     checkBalances(userPublicKey);
                     loadHistory();
-                    toggleAmountInput(); // Pastikan input yang benar muncul saat login
+                    toggleAmountInput();
                 } else {
                     throw new Error("Akses ditolak atau ditutup oleh pengguna.");
                 }
             } catch (error) {
+                console.error("Login Error:", error);
                 errorMsg.style.display = 'block';
                 errorMsg.innerText = "❌ Error: " + error.message;
             }
@@ -349,7 +349,6 @@
             const msg = document.getElementById('message').value;
             const networkType = document.getElementById('networkSelect').value;
             
-            // Mengambil value amount dari input yang sesuai dengan jaringan
             let amount = "";
             if (networkType === 'TESTNET') {
                 amount = document.getElementById('amountTestnet').value;
