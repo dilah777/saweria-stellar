@@ -195,11 +195,10 @@
     </div>
 
     <script type="module">
-        import freighterApi from 'https://esm.sh/@stellar/freighter-api';
-        import * as StellarModule from 'https://esm.sh/@stellar/stellar-sdk';
+        // MENGGUNAKAN JSDELIVR YANG LEBIH STABIL DIBANDING ESM.SH
+        import * as freighterApi from 'https://cdn.jsdelivr.net/npm/@stellar/freighter-api@2.0.0/+esm';
+        import * as StellarSdk from 'https://cdn.jsdelivr.net/npm/@stellar/stellar-sdk@11.2.0/+esm';
         
-        const StellarSdk = StellarModule.default || StellarModule;
-
         let userPublicKey = "";
         
         const serverTestnet = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
@@ -220,7 +219,6 @@
         };
 
         window.connectWallet = async () => {
-            console.log("Tombol login diklik...");
             const errorMsg = document.getElementById('walletError');
             errorMsg.style.display = 'none';
 
