@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web3 Tipping dApp - Stellar</title>
     
-    <!-- LOAD STELLAR SDK SECARA GLOBAL (ANTI-ERROR & PALING STABIL) -->
+    <!-- 1. STELLAR SDK PAKE JALUR AMAN (ANTI CRASH) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
     
     <style>
@@ -199,10 +199,10 @@
     </div>
 
     <script type="module">
-        // NAMED IMPORT - Langsung panggil fungsi spesifik dari Freighter
-        import { isConnected, requestAccess, signTransaction } from 'https://cdn.jsdelivr.net/npm/@stellar/freighter-api@2.0.0/+esm';
+        // 2. FREIGHTER DIKEMBALIKAN KE JALUR ASLI (YANG SUDAH TERBUKTI JALAN)
+        import freighterApi from 'https://esm.sh/@stellar/freighter-api';
         
-        // Panggil StellarSdk dari Window (Jalur Stabil)
+        // Panggil StellarSdk dari Window
         const StellarSdk = window.StellarSdk;
 
         let userPublicKey = "";
@@ -229,16 +229,14 @@
             errorMsg.style.display = 'none';
 
             try {
-                // Menggunakan fungsi isConnected yang dipanggil langsung
-                const installed = await isConnected();
-                if (!installed) {
+                const isInstalled = await freighterApi.isConnected();
+                if (!isInstalled) {
                     errorMsg.style.display = 'block';
                     errorMsg.innerText = "❌ Freighter extension not detected!";
                     return;
                 }
 
-                // Menggunakan fungsi requestAccess yang dipanggil langsung
-                const accessResponse = await requestAccess();
+                const accessResponse = await freighterApi.requestAccess();
                 
                 let pubKey = "";
                 if (typeof accessResponse === 'string') {
@@ -393,8 +391,7 @@
 
                 const xdr = transaction.toXDR('base64');
 
-                // Menggunakan fungsi signTransaction yang dipanggil langsung
-                const signedResponse = await signTransaction(xdr, {
+                const signedResponse = await freighterApi.signTransaction(xdr, {
                     network: freighterNetworkParam,
                     networkPassphrase: activePassphrase
                 });
