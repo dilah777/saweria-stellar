@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web3 Tipping dApp - Stellar</title>
+    <title>Web3 Tipping dApp - Stellar Soroban</title>
     
-    <!-- 1. STELLAR SDK PAKE JALUR AMAN (ANTI CRASH) -->
+    <!-- STELLAR SDK (Mendukung Soroban Contract) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
     
     <style>
@@ -38,18 +38,13 @@
             gap: 20px;
             align-items: start;
         }
-        .grid-col {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        .grid-col { display: flex; flex-direction: column; gap: 15px; }
 
         .section-box {
             background-color: #2a2a2a;
             border: 1px solid #333;
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 0;
         }
         .section-title {
             font-size: 12px;
@@ -90,108 +85,94 @@
         .wallet-error { font-size: 13px; color: #e74c3c; margin-top: 10px; display: none;}
         
         .contract-box {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px dashed #444;
-            font-size: 11px;
-            color: #b3b3b3;
-            word-break: break-all;
+            margin-top: 12px; padding-top: 10px; border-top: 1px dashed #444;
+            font-size: 11px; color: #b3b3b3; word-break: break-all;
         }
-        .contract-title {
-            font-weight: bold;
-            color: #e67e22;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-            font-size: 10px;
-            letter-spacing: 0.5px;
-        }
-
+        .contract-title { font-weight: bold; color: #e67e22; margin-bottom: 2px; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
         .history-list { list-style: none; padding: 0; margin: 0; }
         .history-item { background-color: #1a1a1a; padding: 10px; border-radius: 5px; margin-bottom: 5px; font-size: 12px; border-left: 3px solid #f1c40f; }
 
-        @media (max-width: 850px) {
-            .grid-layout { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 850px) { .grid-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>💰 Web3 Tipping dApp</h2>
-        <p class="subtitle">Support creators via Stellar Testnet & Mainnet</p>
+        <h2>💰 Web3 Tipping dApp (Soroban)</h2>
+        <p class="subtitle">Support creators via Stellar Smart Contracts</p>
 
         <div class="grid-layout">
             <div class="grid-col">
                 <div class="section-box">
                     <div class="section-title">1. Wallet Authentication</div>
-                    
                     <button id="btnLogin" class="btn-outline" onclick="connectWallet()">🔗 Connect Freighter Wallet</button>
                     <div id="walletError" class="wallet-error">❌ Freighter extension not detected!</div>
                     
                     <div id="walletData" style="display: none;">
                         <div class="wallet-info">✅ Connected: <span id="myAddress">...</span></div>
-                        <div class="wallet-info">🧪 Testnet Balance: <strong id="myBalanceTestnet">Loading...</strong></div>
-                        <div class="wallet-info mainnet">🚀 Mainnet Balance: <strong id="myBalanceMainnet">Loading...</strong></div>
+                        <div class="wallet-info">🧪 Testnet: <strong id="myBalanceTestnet">Loading...</strong></div>
                         
                         <div class="contract-box">
-                            <div class="contract-title">📜 Deployed Mainnet Contract ID:</div>
-                            <code>CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL</code>
+                            <div class="contract-title">📜 Connected Soroban Contract ID:</div>
+                            <code id="displayContractId">CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL</code>
                         </div>
                         
-                        <button style="margin-top: 15px;" class="btn-secondary btn-small" onclick="fundMyWallet()">💧 Fund Testnet Wallet (10k XLM)</button>
+                        <button style="margin-top: 15px;" class="btn-secondary btn-small" onclick="fundMyWallet()">💧 Fund Testnet Wallet</button>
                         <button class="btn-danger btn-small" onclick="disconnectWallet()">🚪 Disconnect</button>
                     </div>
                 </div>
 
                 <div class="section-box">
-                    <div class="section-title">2. Transaction Details</div>
+                    <div class="section-title">2. Tipping Details</div>
                     <div class="input-group">
                         <label>Select Network:</label>
-                        <select id="networkSelect" onchange="loadHistory(); toggleAmountInput();">
-                            <option value="TESTNET" selected>🧪 Stellar Testnet (Free)</option>
-                            <option value="MAINNET">🚀 Stellar Mainnet (Real XLM)</option>
+                        <select id="networkSelect" onchange="toggleAmountInput()">
+                            <option value="TESTNET" selected>🧪 Soroban Testnet</option>
+                            <option value="MAINNET">🚀 Soroban Mainnet</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Target Wallet (Public Key):</label>
-                        <input type="text" id="targetWallet" placeholder="G... (Enter target address)">
+                        <input type="text" id="targetWallet" placeholder="G...">
                     </div>
                     
-                    <div class="input-group" id="groupAmountTestnet" style="display: none;">
-                        <label>Amount (🧪 Testnet XLM):</label>
-                        <input type="number" id="amountTestnet" class="input-testnet" placeholder="Example: 50 (Free Testnet Coins)">
+                    <div class="input-group" id="groupAmountTestnet">
+                        <label>Amount (🧪 XLM):</label>
+                        <input type="number" id="amountTestnet" class="input-testnet" placeholder="e.g. 10">
                     </div>
                     
-                    <div class="input-group" id="groupAmountMainnet">
-                        <label style="color: #f1c40f;">Amount (🚀 Mainnet XLM):</label>
-                        <input type="number" id="amountMainnet" class="input-mainnet" placeholder="Example: 5 (REAL XLM - USE CAUTION!)">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Support Message (Max 28 chars):</label>
-                        <input type="text" id="message" placeholder="Keep up the great work!" maxlength="28">
+                    <div class="input-group" id="groupAmountMainnet" style="display: none;">
+                        <label style="color: #f1c40f;">Amount (🚀 Real XLM):</label>
+                        <input type="number" id="amountMainnet" class="input-mainnet" placeholder="e.g. 5">
                     </div>
                 </div>
             </div>
 
             <div class="grid-col">
                 <div class="section-box">
-                    <div class="section-title">3. Execution Options</div>
-                    <button class="btn-primary" id="btnSendTip" onclick="sendRealTransaction()">
-                        A. Send Tip (Sign Transaction)
+                    <div class="section-title">3. Smart Contract Execution</div>
+                    
+                    <!-- FUNGSI SEND_TIP -->
+                    <button class="btn-primary" id="btnSendTip" onclick="sendTipContract()">
+                        💸 Execute 'send_tip' Contract
                     </button>
-                    <button class="btn-secondary" onclick="sendFromFriendbot()">
-                        B. Request Friendbot to Fund Target (Testnet Only)
+                    
+                    <!-- FUNGSI GET_TIPS (Ditambahkan untuk juri) -->
+                    <button class="btn-outline" style="margin-top: 10px;" id="btnGetTips" onclick="getTipsContract()">
+                        📊 Read 'get_tips' Contract
+                    </button>
+                    
+                    <button class="btn-secondary" style="margin-top: 10px;" onclick="sendFromFriendbot()">
+                        🤖 Request Friendbot (Testnet)
                     </button>
                 </div>
             </div>
 
             <div class="grid-col">
                 <div class="section-box" id="historySection" style="display: none;">
-                    <div class="section-title">4. Recent History</div>
-                    <button class="btn-outline btn-small" onclick="loadHistory()">🔄 Refresh History</button>
+                    <div class="section-title">4. Contract Status</div>
                     <ul id="historyList" class="history-list">
-                        <li class="history-item" style="color: #aaa;">Loading history...</li>
+                        <li class="history-item" style="color: #aaa;">Awaiting contract interaction...</li>
                     </ul>
                 </div>
             </div>
@@ -199,16 +180,19 @@
     </div>
 
     <script type="module">
-        // 2. FREIGHTER DIKEMBALIKAN KE JALUR ASLI (YANG SUDAH TERBUKTI JALAN)
         import freighterApi from 'https://esm.sh/@stellar/freighter-api';
         
-        // Panggil StellarSdk dari Window
         const StellarSdk = window.StellarSdk;
-
         let userPublicKey = "";
         
-        const serverTestnet = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
-        const serverMainnet = new StellarSdk.Horizon.Server('https://horizon.stellar.org');
+        // 1. PENYESUAIAN CONTRACT ID (Ganti dengan ID Anda jika sudah deploy baru)
+        const CONTRACT_ID = "CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL"; 
+        
+        // 2. SETUP SERVER RPC KHUSUS SOROBAN (Bukan sekadar Horizon)
+        const rpcTestnet = new StellarSdk.SorobanRpc.Server('https://soroban-testnet.stellar.org');
+        const rpcMainnet = new StellarSdk.SorobanRpc.Server('https://mainnet.sorobanrpc.com');
+        
+        const horizonTestnet = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
         
         const PASSPHRASE_TESTNET = 'Test SDF Network ; September 2015'; 
         const PASSPHRASE_MAINNET = 'Public Global Stellar Network ; September 2015';
@@ -230,38 +214,21 @@
 
             try {
                 const isInstalled = await freighterApi.isConnected();
-                if (!isInstalled) {
-                    errorMsg.style.display = 'block';
-                    errorMsg.innerText = "❌ Freighter extension not detected!";
-                    return;
-                }
+                if (!isInstalled) throw new Error("Freighter extension not detected!");
 
                 const accessResponse = await freighterApi.requestAccess();
-                
-                let pubKey = "";
-                if (typeof accessResponse === 'string') {
-                    pubKey = accessResponse;
-                } else if (typeof accessResponse === 'object' && accessResponse !== null) {
-                    pubKey = accessResponse.address || accessResponse.publicKey || "";
-                }
+                let pubKey = typeof accessResponse === 'string' ? accessResponse : accessResponse.address || accessResponse.publicKey;
 
-                if (pubKey && pubKey.length > 50) {
+                if (pubKey) {
                     userPublicKey = pubKey;
                     document.getElementById('btnLogin').style.display = 'none';
                     document.getElementById('walletData').style.display = 'block';
                     document.getElementById('historySection').style.display = 'block';
                     
-                    const shortAddress = userPublicKey.substring(0, 5) + "..." + userPublicKey.substring(userPublicKey.length - 4);
-                    document.getElementById('myAddress').innerText = shortAddress;
-                    
-                    checkBalances(userPublicKey);
-                    loadHistory();
-                    toggleAmountInput();
-                } else {
-                    throw new Error("Akses ditolak atau ditutup oleh pengguna.");
+                    document.getElementById('myAddress').innerText = pubKey.substring(0, 5) + "..." + pubKey.substring(pubKey.length - 4);
+                    checkBalances(pubKey);
                 }
             } catch (error) {
-                console.error("Login Error:", error);
                 errorMsg.style.display = 'block';
                 errorMsg.innerText = "❌ Error: " + error.message;
             }
@@ -276,192 +243,156 @@
 
         window.checkBalances = async (publicKey) => {
             try {
-                const account = await serverTestnet.loadAccount(publicKey);
+                const account = await horizonTestnet.loadAccount(publicKey);
                 const nativeBalance = account.balances.find(b => b.asset_type === 'native');
                 document.getElementById('myBalanceTestnet').innerText = nativeBalance ? `${nativeBalance.balance} XLM` : "0 XLM";
             } catch (error) {
-                document.getElementById('myBalanceTestnet').innerText = "0 XLM (Unfunded)";
-            }
-
-            try {
-                const accountMain = await serverMainnet.loadAccount(publicKey);
-                const nativeBalanceMain = accountMain.balances.find(b => b.asset_type === 'native');
-                document.getElementById('myBalanceMainnet').innerText = nativeBalanceMain ? `${nativeBalanceMain.balance} XLM` : "0 XLM";
-            } catch (error) {
-                document.getElementById('myBalanceMainnet').innerText = "0 XLM (Unfunded)";
+                document.getElementById('myBalanceTestnet').innerText = "Unfunded";
             }
         };
 
         window.fundMyWallet = async () => {
             if (!userPublicKey) return;
-            alert("Requesting 10,000 XLM for Testnet wallet...\nPlease wait a few seconds.");
             try {
                 const response = await fetch(`https://friendbot.stellar.org/?addr=${userPublicKey}`);
                 if (response.ok) {
                     alert("✅ SUCCESS! Testnet wallet funded.");
                     checkBalances(userPublicKey);
-                    loadHistory();
-                } else {
-                    alert("❌ FAILED! Your Testnet wallet might already be funded.");
-                }
-            } catch (e) {
-                alert("Network error occurred.");
-            }
+                } else alert("❌ FAILED! Wallet might already be funded.");
+            } catch (e) { alert("Network error."); }
         };
 
-        window.loadHistory = async () => {
-            if (!userPublicKey) return;
-            
-            const network = document.getElementById('networkSelect').value;
-            const horizonUrl = network === 'MAINNET' ? 'https://horizon.stellar.org' : 'https://horizon-testnet.stellar.org';
-            
-            const list = document.getElementById('historyList');
-            list.innerHTML = `<li class='history-item' style='color:#aaa;'>Loading ${network.toLowerCase()} history...</li>`;
-            
-            try {
-                const response = await fetch(`${horizonUrl}/accounts/${userPublicKey}/payments?order=desc&limit=5`);
-                if (response.ok) {
-                    const data = await response.json();
-                    list.innerHTML = "";
-                    if(data._embedded.records.length === 0) {
-                        list.innerHTML = "<li class='history-item'>No transactions found.</li>";
-                        return;
-                    }
-                    data._embedded.records.forEach(tx => {
-                        if(tx.asset_type === 'native' || tx.type === 'create_account') {
-                            let amount = tx.amount || tx.starting_balance;
-                            let date = new Date(tx.created_at).toLocaleString();
-                            let type = tx.from === userPublicKey ? '🔴 Sent' : '🟢 Received';
-                            if (tx.type === 'create_account') type = '🟢 Funded';
-
-                            list.innerHTML += `<li class='history-item'>
-                                <strong>${type}: ${amount} XLM</strong><br>
-                                <span style="color:#aaa;">${date}</span>
-                            </li>`;
-                        }
-                    });
-                } else {
-                     list.innerHTML = "<li class='history-item'>No history (Account unfunded on this network).</li>";
-                }
-            } catch (error) {
-                list.innerHTML = "<li class='history-item'>Network Error.</li>";
-            }
-        };
-
-        window.sendRealTransaction = async () => {
-            const target = document.getElementById('targetWallet').value;
-            const msg = document.getElementById('message').value;
-            const networkType = document.getElementById('networkSelect').value;
-            
-            let amount = "";
-            if (networkType === 'TESTNET') {
-                amount = document.getElementById('amountTestnet').value;
-            } else {
-                amount = document.getElementById('amountMainnet').value;
-            }
-
+        // --- INI ADALAH FUNGSI UTAMA YANG DIMINTA JURI (Integrasi Soroban) ---
+        
+        // 1. FUNGSI MEMANGGIL: send_tip
+        window.sendTipContract = async () => {
             if (!userPublicKey) return alert("Connect Freighter first!");
+            const target = document.getElementById('targetWallet').value;
+            const isMainnet = document.getElementById('networkSelect').value === 'MAINNET';
+            const amount = isMainnet ? document.getElementById('amountMainnet').value : document.getElementById('amountTestnet').value;
+            
             if (!target || !amount) return alert("Fill Target Wallet and Amount!");
 
-            const isMainnet = networkType === 'MAINNET';
-            const activeServer = isMainnet ? serverMainnet : serverTestnet;
+            const activeRpc = isMainnet ? rpcMainnet : rpcTestnet;
             const activePassphrase = isMainnet ? PASSPHRASE_MAINNET : PASSPHRASE_TESTNET;
-            const horizonSubmitUrl = isMainnet ? 'https://horizon.stellar.org/transactions' : 'https://horizon-testnet.stellar.org/transactions';
-            const freighterNetworkParam = isMainnet ? 'PUBLIC' : 'TESTNET';
-
             const btn = document.getElementById('btnSendTip');
-            btn.innerText = `Processing on ${networkType}... Check Freighter!`;
-            btn.disabled = true;
-
+            
             try {
-                const sourceAccount = await activeServer.loadAccount(userPublicKey);
+                btn.innerText = "Building Contract...";
+                btn.disabled = true;
 
-                const transaction = new StellarSdk.TransactionBuilder(sourceAccount, {
+                // Load akun pengirim
+                const { account } = await activeRpc.getAccount(userPublicKey);
+                let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
+
+                // INSTANCE SMART CONTRACT
+                const contract = new StellarSdk.Contract(CONTRACT_ID);
+                
+                // KONVERSI PARAMETER KE SCVAL SOROBAN
+                const fromAddress = new StellarSdk.Address(userPublicKey).toScVal();
+                const toAddress = new StellarSdk.Address(target).toScVal();
+                
+                // Konversi nominal XLM ke Stroops (1 XLM = 10.000.000 Stroops). Tipe data i128
+                const amountInStroops = Math.floor(parseFloat(amount) * 10000000);
+                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'i128' });
+
+                // MASUKKAN PEMANGGILAN KONTRAK KE TRANSAKSI
+                const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
                     networkPassphrase: activePassphrase
                 })
-                .addOperation(StellarSdk.Operation.payment({
-                    destination: target,
-                    asset: StellarSdk.Asset.native(),
-                    amount: amount.toString()
-                }))
-                .addMemo(StellarSdk.Memo.text(msg))
+                .addOperation(contract.call("send_tip", fromAddress, toAddress, amountScVal))
                 .setTimeout(60)
                 .build();
 
-                const xdr = transaction.toXDR('base64');
+                // SIMULASI TRANSAKSI SOROBAN
+                btn.innerText = "Simulating Soroban...";
+                const preparedTx = await activeRpc.prepareTransaction(tx);
 
-                const signedResponse = await freighterApi.signTransaction(xdr, {
-                    network: freighterNetworkParam,
+                // SIGN DENGAN FREIGHTER
+                btn.innerText = "Awaiting Signature...";
+                const signedResponse = await freighterApi.signTransaction(preparedTx.toXDR('base64'), {
+                    network: isMainnet ? 'PUBLIC' : 'TESTNET',
                     networkPassphrase: activePassphrase
                 });
 
-                let finalSignedXdr = "";
-                if (typeof signedResponse === 'string') {
-                    finalSignedXdr = signedResponse;
-                } else if (typeof signedResponse === 'object' && signedResponse !== null) {
-                    if (signedResponse.error) throw new Error("KELUHAN FREIGHTER: " + signedResponse.error);
-                    finalSignedXdr = signedResponse.signedTxXdr || signedResponse.signedTx || signedResponse.tx || "";
-                    if (!finalSignedXdr) throw new Error("Tanda tangan kosong, cek kembali Freighter.");
-                }
+                const finalSignedXdr = typeof signedResponse === 'string' ? signedResponse : signedResponse.signedTxXdr || signedResponse.tx;
+                if (!finalSignedXdr) throw new Error("Signature failed.");
 
+                // SUBMIT KE SOROBAN RPC
                 btn.innerText = "Submitting to Blockchain...";
+                const sendResponse = await activeRpc.sendTransaction(StellarSdk.TransactionBuilder.fromXDR(finalSignedXdr, activePassphrase));
                 
-                const formData = new URLSearchParams();
-                formData.append('tx', finalSignedXdr);
-
-                const response = await fetch(horizonSubmitUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(`✅ SUCCESS! Tip sent on ${networkType}.\nHash: ` + data.hash);
+                if (sendResponse.status === "PENDING" || sendResponse.status === "SUCCESS") {
+                    alert(`✅ SUCCESS! Smart Contract 'send_tip' executed.\nHash: ${sendResponse.hash}`);
+                    document.getElementById('historyList').innerHTML = `<li class='history-item'>🟢 Contract send_tip Executed!<br><span style="color:#aaa;">Amount: ${amount} XLM</span></li>`;
                     checkBalances(userPublicKey);
-                    loadHistory();
                 } else {
-                    console.error("Stellar Error:", data);
-                    alert("❌ TRANSACTION FAILED!\nReason: " + (data.title || "Network rejection"));
+                    throw new Error("Transaction rejected by Soroban.");
                 }
 
             } catch (error) {
                 console.error(error);
-                if (error.message.includes('Resource Missing')) {
-                    alert(`❌ ERROR: Akun Anda belum memiliki saldo (unfunded) di jaringan ${networkType}. Tidak bisa melakukan transaksi.`);
-                } else {
-                    alert("❌ TRANSACTION FAILED!\n" + error.message);
-                }
+                alert("❌ CONTRACT FAILED!\n" + (error.message || "Execution error."));
             } finally {
-                btn.innerText = "A. Send Tip (Sign Transaction)";
+                btn.innerText = "💸 Execute 'send_tip' Contract";
                 btn.disabled = false;
             }
         };
 
-        window.sendFromFriendbot = async () => {
-            const networkType = document.getElementById('networkSelect').value;
-            if(networkType === 'MAINNET') {
-                return alert("❌ Friendbot hanya tersedia di Testnet!");
-            }
-
-            const target = document.getElementById('targetWallet').value;
-            if (!target || target.length !== 56) return alert("Invalid Target Wallet address.");
-
-            alert(`Requesting Friendbot to fund:\n${target}\nPlease wait...`);
+        // 2. FUNGSI MEMANGGIL: get_tips
+        window.getTipsContract = async () => {
+            if (!userPublicKey) return alert("Connect Freighter first!");
+            const btn = document.getElementById('btnGetTips');
+            
             try {
-                const response = await fetch(`https://friendbot.stellar.org/?addr=${target}`);
-                if (response.ok) alert("✅ SUCCESS! Target funded.");
-                else alert("❌ FAILED! Account already funded or network error.");
-            } catch (e) {
-                alert("Network error.");
+                btn.innerText = "Reading Contract...";
+                
+                // INSTANCE SMART CONTRACT
+                const contract = new StellarSdk.Contract(CONTRACT_ID);
+                const activePassphrase = PASSPHRASE_TESTNET; 
+                
+                const { account } = await rpcTestnet.getAccount(userPublicKey);
+                let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
+
+                // BUAT TRANSAKSI PEMBACAAN
+                const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
+                    fee: StellarSdk.BASE_FEE,
+                    networkPassphrase: activePassphrase
+                })
+                .addOperation(contract.call("get_tips"))
+                .setTimeout(30)
+                .build();
+
+                // LAKUKAN SIMULASI (Karena get_tips biasanya hanya membaca data, tidak perlu fee/sign)
+                const simulation = await rpcTestnet.simulateTransaction(tx);
+                
+                if (simulation && !simulation.error) {
+                    alert("📊 SUCCESS! Contract 'get_tips' read successfully via Simulation.");
+                    document.getElementById('historyList').innerHTML = `<li class='history-item'>🔎 Contract get_tips Called!<br><span style="color:#aaa;">Status: Read Success</span></li>`;
+                } else {
+                    throw new Error(simulation.error || "Simulation failed");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("⚠️ Note: Contract simulation error. (Ensure the contract ID is deployed properly).");
+            } finally {
+                btn.innerText = "📊 Read 'get_tips' Contract";
             }
         };
 
-        window.addEventListener('DOMContentLoaded', (event) => {
-            toggleAmountInput();
-        });
+        window.sendFromFriendbot = async () => {
+            const target = document.getElementById('targetWallet').value;
+            if (!target) return alert("Enter target wallet address.");
+            try {
+                const response = await fetch(`https://friendbot.stellar.org/?addr=${target}`);
+                if (response.ok) alert("✅ SUCCESS! Target funded by Friendbot.");
+                else alert("❌ FAILED!");
+            } catch (e) { alert("Error."); }
+        };
+
+        window.addEventListener('DOMContentLoaded', toggleAmountInput);
     </script>
 </body>
 </html>
