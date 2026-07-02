@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web3 Tipping dApp - Stellar Soroban</title>
     
-    <!-- STELLAR SDK (Mendukung Soroban Contract) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
     
     <style>
@@ -152,12 +151,10 @@
                 <div class="section-box">
                     <div class="section-title">3. Smart Contract Execution</div>
                     
-                    <!-- FUNGSI SEND_TIP -->
                     <button class="btn-primary" id="btnSendTip" onclick="sendTipContract()">
                         💸 Execute 'send_tip' Contract
                     </button>
                     
-                    <!-- FUNGSI GET_TIPS (Ditambahkan untuk juri) -->
                     <button class="btn-outline" style="margin-top: 10px;" id="btnGetTips" onclick="getTipsContract()">
                         📊 Read 'get_tips' Contract
                     </button>
@@ -185,13 +182,12 @@
         const StellarSdk = window.StellarSdk;
         let userPublicKey = "";
         
-        // 1. PENYESUAIAN CONTRACT ID (Ganti dengan ID Anda jika sudah deploy baru)
+        // 1. PENYESUAIAN CONTRACT ID
         const CONTRACT_ID = "CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL"; 
         
-        // 2. SETUP SERVER RPC KHUSUS SOROBAN (Bukan sekadar Horizon)
+        // 2. SETUP SERVER RPC KHUSUS SOROBAN
         const rpcTestnet = new StellarSdk.SorobanRpc.Server('https://soroban-testnet.stellar.org');
         const rpcMainnet = new StellarSdk.SorobanRpc.Server('https://mainnet.sorobanrpc.com');
-        
         const horizonTestnet = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
         
         const PASSPHRASE_TESTNET = 'Test SDF Network ; September 2015'; 
@@ -288,20 +284,19 @@
                 // INSTANCE SMART CONTRACT
                 const contract = new StellarSdk.Contract(CONTRACT_ID);
                 
-                // KONVERSI PARAMETER KE SCVAL SOROBAN
-                const fromAddress = new StellarSdk.Address(userPublicKey).toScVal();
-                const toAddress = new StellarSdk.Address(target).toScVal();
-                
-                // Konversi nominal XLM ke Stroops (1 XLM = 10.000.000 Stroops). Tipe data i128
+                // --- PERBAIKAN KONVERSI PARAMETER ---
+                const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'string' });
+                const targetScVal = StellarSdk.nativeToScVal(target, { type: 'string' });
                 const amountInStroops = Math.floor(parseFloat(amount) * 10000000);
-                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'i128' });
+                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'u64' }); // Diganti u64
+                const messageScVal = StellarSdk.nativeToScVal("Donation via Web3 dApp", { type: 'string' }); // Tambah pesan
 
-                // MASUKKAN PEMANGGILAN KONTRAK KE TRANSAKSI
+                // MASUKKAN PEMANGGILAN KONTRAK KE TRANSAKSI (Sekarang lengkap 4 parameter)
                 const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
                     networkPassphrase: activePassphrase
                 })
-                .addOperation(contract.call("send_tip", fromAddress, toAddress, amountScVal))
+                .addOperation(contract.call("send_tip", senderScVal, targetScVal, amountScVal, messageScVal))
                 .setTimeout(60)
                 .build();
 
