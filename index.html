@@ -183,8 +183,8 @@
         let userPublicKey = "";
         
         // 1. DUAL CONTRACT ID SETUP
-        const CONTRACT_ID_MAINNET = "CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL"; // Dari Mas Indra Mahesa
-        const CONTRACT_ID_TESTNET = "CB2YPAWUPBZ6FUGZ4TQ6M2JBITJ5VOVD7U3CAMUUZR2QNZ77I6BUSSRS"; // ID Testnet Anda yang baru di-deploy
+        const CONTRACT_ID_MAINNET = "CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL"; 
+        const CONTRACT_ID_TESTNET = "CB2YPAWUPBZ6FUGZ4TQ6M2JBITJ5VOVD7U3CAMUUZR2QNZ77I6BUSSRS"; 
         
         // 2. SETUP SERVER RPC KHUSUS SOROBAN
         const rpcTestnet = new StellarSdk.SorobanRpc.Server('https://soroban-testnet.stellar.org');
@@ -282,18 +282,21 @@
                 btn.innerText = "Building Contract...";
                 btn.disabled = true;
 
-                // Load akun pengirim
                 const { account } = await activeRpc.getAccount(userPublicKey);
                 let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
-
-                // INSTANCE SMART CONTRACT DENGAN ID YANG AKTIF (Mainnet/Testnet)
                 const contract = new StellarSdk.Contract(activeContractId);
                 
-                const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'string' });
-                const targetScVal = StellarSdk.nativeToScVal(target, { type: 'string' });
+                // ======== PERBAIKAN TIPE DATA RUST ========
+                // Address memakai tipe 'address', bukan 'string'
+                const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'address' });
+                const targetScVal = StellarSdk.nativeToScVal(target, { type: 'address' });
+                
+                // Amount memakai tipe 'i128' standar koin Soroban
                 const amountInStroops = Math.floor(parseFloat(amount) * 10000000);
-                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'u64' });
+                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'i128' });
+                
                 const messageScVal = StellarSdk.nativeToScVal("Donation via Web3 dApp", { type: 'string' });
+                // ==========================================
 
                 const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
@@ -348,9 +351,7 @@
             try {
                 btn.innerText = "Reading Contract...";
                 
-                // INSTANCE SMART CONTRACT DENGAN ID YANG AKTIF
                 const contract = new StellarSdk.Contract(activeContractId);
-                
                 const { account } = await activeRpc.getAccount(userPublicKey);
                 let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
 
