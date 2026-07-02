@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web3 Tipping dApp - Stellar Soroban</title>
     
+    <!-- STELLAR SDK (Mendukung Soroban Contract) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/12.2.0/stellar-sdk.min.js"></script>
     
     <style>
@@ -182,8 +183,9 @@
         const StellarSdk = window.StellarSdk;
         let userPublicKey = "";
         
-        // 1. PENYESUAIAN CONTRACT ID
-        const CONTRACT_ID = "CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL"; 
+        // 1. DUAL CONTRACT ID SETUP
+        const CONTRACT_ID_MAINNET = "CD3WC5DF2JA3SAHCVISQ6R34KB4YJZDCDB5URHTSFSY555QQJLFIVPQL"; // Dari Mas Indra Mahesa
+        const CONTRACT_ID_TESTNET = "C_ISI_DENGAN_ID_TESTNET_KAMU_DISINI"; // GANTI INI JIKA SUDAH DEPLOY KE TESTNET
         
         // 2. SETUP SERVER RPC KHUSUS SOROBAN
         const rpcTestnet = new StellarSdk.SorobanRpc.Server('https://soroban-testnet.stellar.org');
@@ -195,12 +197,16 @@
 
         window.toggleAmountInput = () => {
             const network = document.getElementById('networkSelect').value;
+            const displayId = document.getElementById('displayContractId');
+            
             if (network === 'TESTNET') {
                 document.getElementById('groupAmountTestnet').style.display = 'block';
                 document.getElementById('groupAmountMainnet').style.display = 'none';
+                if(displayId) displayId.innerText = CONTRACT_ID_TESTNET;
             } else {
                 document.getElementById('groupAmountTestnet').style.display = 'none';
                 document.getElementById('groupAmountMainnet').style.display = 'block';
+                if(displayId) displayId.innerText = CONTRACT_ID_MAINNET;
             }
         };
 
@@ -257,8 +263,6 @@
                 } else alert("❌ FAILED! Wallet might already be funded.");
             } catch (e) { alert("Network error."); }
         };
-
-        // --- INI ADALAH FUNGSI UTAMA YANG DIMINTA JURI (Integrasi Soroban) ---
         
         // 1. FUNGSI MEMANGGIL: send_tip
         window.sendTipContract = async () => {
@@ -271,6 +275,8 @@
 
             const activeRpc = isMainnet ? rpcMainnet : rpcTestnet;
             const activePassphrase = isMainnet ? PASSPHRASE_MAINNET : PASSPHRASE_TESTNET;
+            const activeContractId = isMainnet ? CONTRACT_ID_MAINNET : CONTRACT_ID_TESTNET;
+            
             const btn = document.getElementById('btnSendTip');
             
             try {
@@ -281,17 +287,15 @@
                 const { account } = await activeRpc.getAccount(userPublicKey);
                 let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
 
-                // INSTANCE SMART CONTRACT
-                const contract = new StellarSdk.Contract(CONTRACT_ID);
+                // INSTANCE SMART CONTRACT DENGAN ID YANG AKTIF (Mainnet/Testnet)
+                const contract = new StellarSdk.Contract(activeContractId);
                 
-                // --- PERBAIKAN KONVERSI PARAMETER ---
                 const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'string' });
                 const targetScVal = StellarSdk.nativeToScVal(target, { type: 'string' });
                 const amountInStroops = Math.floor(parseFloat(amount) * 10000000);
-                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'u64' }); // Diganti u64
-                const messageScVal = StellarSdk.nativeToScVal("Donation via Web3 dApp", { type: 'string' }); // Tambah pesan
+                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'u64' });
+                const messageScVal = StellarSdk.nativeToScVal("Donation via Web3 dApp", { type: 'string' });
 
-                // MASUKKAN PEMANGGILAN KONTRAK KE TRANSAKSI (Sekarang lengkap 4 parameter)
                 const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
                     networkPassphrase: activePassphrase
@@ -300,11 +304,9 @@
                 .setTimeout(60)
                 .build();
 
-                // SIMULASI TRANSAKSI SOROBAN
                 btn.innerText = "Simulating Soroban...";
                 const preparedTx = await activeRpc.prepareTransaction(tx);
 
-                // SIGN DENGAN FREIGHTER
                 btn.innerText = "Awaiting Signature...";
                 const signedResponse = await freighterApi.signTransaction(preparedTx.toXDR('base64'), {
                     network: isMainnet ? 'PUBLIC' : 'TESTNET',
@@ -314,7 +316,6 @@
                 const finalSignedXdr = typeof signedResponse === 'string' ? signedResponse : signedResponse.signedTxXdr || signedResponse.tx;
                 if (!finalSignedXdr) throw new Error("Signature failed.");
 
-                // SUBMIT KE SOROBAN RPC
                 btn.innerText = "Submitting to Blockchain...";
                 const sendResponse = await activeRpc.sendTransaction(StellarSdk.TransactionBuilder.fromXDR(finalSignedXdr, activePassphrase));
                 
@@ -340,17 +341,20 @@
             if (!userPublicKey) return alert("Connect Freighter first!");
             const btn = document.getElementById('btnGetTips');
             
+            const isMainnet = document.getElementById('networkSelect').value === 'MAINNET';
+            const activeRpc = isMainnet ? rpcMainnet : rpcTestnet;
+            const activePassphrase = isMainnet ? PASSPHRASE_MAINNET : PASSPHRASE_TESTNET;
+            const activeContractId = isMainnet ? CONTRACT_ID_MAINNET : CONTRACT_ID_TESTNET;
+            
             try {
                 btn.innerText = "Reading Contract...";
                 
-                // INSTANCE SMART CONTRACT
-                const contract = new StellarSdk.Contract(CONTRACT_ID);
-                const activePassphrase = PASSPHRASE_TESTNET; 
+                // INSTANCE SMART CONTRACT DENGAN ID YANG AKTIF
+                const contract = new StellarSdk.Contract(activeContractId);
                 
-                const { account } = await rpcTestnet.getAccount(userPublicKey);
+                const { account } = await activeRpc.getAccount(userPublicKey);
                 let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
 
-                // BUAT TRANSAKSI PEMBACAAN
                 const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
                     networkPassphrase: activePassphrase
@@ -359,8 +363,7 @@
                 .setTimeout(30)
                 .build();
 
-                // LAKUKAN SIMULASI (Karena get_tips biasanya hanya membaca data, tidak perlu fee/sign)
-                const simulation = await rpcTestnet.simulateTransaction(tx);
+                const simulation = await activeRpc.simulateTransaction(tx);
                 
                 if (simulation && !simulation.error) {
                     alert("📊 SUCCESS! Contract 'get_tips' read successfully via Simulation.");
@@ -387,7 +390,9 @@
             } catch (e) { alert("Error."); }
         };
 
-        window.addEventListener('DOMContentLoaded', toggleAmountInput);
+        window.addEventListener('DOMContentLoaded', () => {
+            toggleAmountInput();
+        });
     </script>
 </body>
 </html>
