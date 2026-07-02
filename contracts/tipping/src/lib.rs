@@ -6,7 +6,7 @@ use soroban_sdk::{contract, contractimpl, contracttype, symbol_short, Env, Strin
 #[derive(Clone, Debug)]
 pub struct Donation {
     pub sender: String,
-    pub target: String, // Ditambahkan agar sesuai dengan input "Target Wallet" di web
+    pub target: String, 
     pub amount: u64,
     pub message: String,
 }
@@ -17,7 +17,7 @@ pub struct SaweriaContract;
 #[contractimpl]
 impl SaweriaContract {
     // 2. Function (Write) to send a tip and record the message on-chain
-    pub fn send_tip(env: Env, sender: String, target: String, amount: u64, message: String) -> String {
+    pub fn send_tip(env: Env, sender: String, target: String, amount: u64, message: String) -> bool {
         // Wrap the new donation data
         let new_donation = Donation {
             sender,
@@ -39,8 +39,8 @@ impl SaweriaContract {
         // Save the updated list back into the blockchain storage
         env.storage().instance().set(&symbol_short!("TIPS"), &donations);
 
-        // Return a success message
-        String::from_str(&env, "Tip successfully recorded on the blockchain!")
+        // Return boolean true (Jauh lebih ringan dan aman dari crash memori VM)
+        true
     }
 
     // 3. Function (Read) to view all donation history
