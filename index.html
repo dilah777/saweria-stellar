@@ -189,7 +189,10 @@
         // 2. SETUP SERVER RPC KHUSUS SOROBAN
         const rpcTestnet = new StellarSdk.SorobanRpc.Server('https://soroban-testnet.stellar.org');
         const rpcMainnet = new StellarSdk.SorobanRpc.Server('https://mainnet.sorobanrpc.com');
+        
+        // KUNCI PERBAIKAN: Horizon server yang benar untuk mengambil Sequence Number!
         const horizonTestnet = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
+        const horizonMainnet = new StellarSdk.Horizon.Server('https://horizon.stellar.org');
         
         const PASSPHRASE_TESTNET = 'Test SDF Network ; September 2015'; 
         const PASSPHRASE_MAINNET = 'Public Global Stellar Network ; September 2015';
@@ -273,6 +276,7 @@
             if (!target || !amount) return alert("Fill Target Wallet and Amount!");
 
             const activeRpc = isMainnet ? rpcMainnet : rpcTestnet;
+            const activeHorizon = isMainnet ? horizonMainnet : horizonTestnet;
             const activePassphrase = isMainnet ? PASSPHRASE_MAINNET : PASSPHRASE_TESTNET;
             const activeContractId = isMainnet ? CONTRACT_ID_MAINNET : CONTRACT_ID_TESTNET;
             
@@ -282,12 +286,12 @@
                 btn.innerText = "Building Contract...";
                 btn.disabled = true;
 
-                const { account } = await activeRpc.getAccount(userPublicKey);
-                let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
+                // PERBAIKAN: Mengambil akun & sequence dari Horizon secara valid
+                const account = await activeHorizon.loadAccount(userPublicKey);
+                let sourceAccount = new StellarSdk.Account(userPublicKey, account.sequence);
+                
                 const contract = new StellarSdk.Contract(activeContractId);
                 
-                // ======== PERBAIKAN TIPE DATA ========
-                // Kita kembalikan ke tipe 'string' dan 'u64' agar cocok persis dengan lib.rs
                 const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'string' });
                 const targetScVal = StellarSdk.nativeToScVal(target, { type: 'string' });
                 
@@ -295,7 +299,6 @@
                 const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'u64' });
                 
                 const messageScVal = StellarSdk.nativeToScVal("Donation via Web3 dApp", { type: 'string' });
-                // ==========================================
 
                 const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
@@ -325,7 +328,8 @@
                     document.getElementById('historyList').innerHTML = `<li class='history-item'>🟢 Contract send_tip Executed!<br><span style="color:#aaa;">Amount: ${amount} XLM</span></li>`;
                     checkBalances(userPublicKey);
                 } else {
-                    throw new Error("Transaction rejected by Soroban.");
+                    console.log("Soroban Rejection Details:", sendResponse);
+                    throw new Error("Transaction rejected by Soroban. Check console.");
                 }
 
             } catch (error) {
@@ -344,6 +348,7 @@
             
             const isMainnet = document.getElementById('networkSelect').value === 'MAINNET';
             const activeRpc = isMainnet ? rpcMainnet : rpcTestnet;
+            const activeHorizon = isMainnet ? horizonMainnet : horizonTestnet;
             const activePassphrase = isMainnet ? PASSPHRASE_MAINNET : PASSPHRASE_TESTNET;
             const activeContractId = isMainnet ? CONTRACT_ID_MAINNET : CONTRACT_ID_TESTNET;
             
@@ -351,8 +356,10 @@
                 btn.innerText = "Reading Contract...";
                 
                 const contract = new StellarSdk.Contract(activeContractId);
-                const { account } = await activeRpc.getAccount(userPublicKey);
-                let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
+                
+                // PERBAIKAN: Mengambil akun & sequence dari Horizon secara valid
+                const account = await activeHorizon.loadAccount(userPublicKey);
+                let sourceAccount = new StellarSdk.Account(userPublicKey, account.sequence);
 
                 const tx = new StellarSdk.TransactionBuilder(sourceAccount, {
                     fee: StellarSdk.BASE_FEE,
