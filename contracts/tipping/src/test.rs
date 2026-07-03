@@ -9,8 +9,8 @@ fn test_tipping_flow() {
     let env = Env::default();
     env.mock_all_auths(); // Matikan pengecekan auth untuk testing lokal
 
-    // 2. Daftarkan kontrak ke dalam environment testing (menggunakan syntax SDK Anda)
-    let contract_id = env.register(SaweriaContract, ());
+    // 2. Daftarkan kontrak ke dalam environment testing
+    let contract_id = env.register_contract(None, SaweriaContract);
     
     // 3. Buat "Client" untuk memanggil fungsi-fungsi kontrak
     let client = SaweriaContractClient::new(&env, &contract_id);
@@ -24,11 +24,8 @@ fn test_tipping_flow() {
     // 5. TEST PERTAMA: Memanggil fungsi send_tip
     let response = client.send_tip(&sender, &target, &amount, &message);
     
-    // Pastikan balasan dari kontrak sesuai dengan yang kita tulis di lib.rs
-    assert_eq!(
-        response,
-        String::from_str(&env, "Tip successfully recorded on the blockchain!")
-    );
+    // KUNCI PERBAIKAN: Pastikan balasan dari kontrak adalah 'true' (sesuai lib.rs terbaru)
+    assert_eq!(response, true);
 
     // 6. TEST KEDUA: Memanggil fungsi get_tips untuk mengecek data yang tersimpan
     let tips = client.get_tips();
