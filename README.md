@@ -40,18 +40,14 @@ Access the live application here: [https://saweria-stellar.vercel.app](https://s
 4. Ensure you have the **Freighter Wallet** extension installed on your browser and set to the appropriate network.
 
 ## 📸 Screenshots
-
-### 1. Live Mainnet Dashboard
-![Live Mainnet Dashboard](https://github.com/user-attachments/assets/84d1bb03-76fc-4264-9d9a-d5a41162da45)
-*Description: The live deployed interface, with the default network set to Stellar Mainnet and the Smart Contract ID integrated.*
-
-### 2. Dual Network & Friendbot Integration
-![Testnet Funding Success](https://github.com/user-attachments/assets/b3d978ca-07f3-40ba-9d62-113e7e0d93ac)
-*Description: Demonstration of the Testnet mode, showing a successful wallet funding operation via the integrated Stellar Friendbot.*
-
-### 3. Transaction Success & History
-![Transaction History](https://github.com/user-attachments/assets/0ef8355c-e142-43f1-99a2-ec43bbcdcc2a)
-*Description: Successful tipping execution on the Stellar Network, verified by the Transaction Hash and reflected in the Recent History tab.*
-
+### 1. Soroban Smart Contract Execution
+![Transaction Success Hash](    <img width="1360" height="768" alt="image" src="https://github.com/user-attachments/assets/257e8de5-0cdb-4e0b-83d7-f7bb04db3403" />
+      ) *Description: Successful execution of the 'send_tip' Soroban smart contract on the Stellar Testnet, returning a verified transaction hash directly from the blockchain.*  
+      
+### 2. Live Dashboard & Freighter Integration
+![Live Dashboard](  <img width="1360" height="768" alt="image" src="https://github.com/user-attachments/assets/95a7bc35-d49f-467a-a2a2-0065860312e6" />
+)
+*Description: The updated frontend interface successfully reading and displaying the smart contract status after a transaction, seamlessly integrated with the Freighter wallet extension.*
+      
 ---
 *Built with passion, persistence, and lots of coffee by Muhammad Guntur Sa'dillah.*
