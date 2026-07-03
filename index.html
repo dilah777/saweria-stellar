@@ -286,14 +286,13 @@
                 let sourceAccount = new StellarSdk.Account(userPublicKey, account ? account.sequence : "0");
                 const contract = new StellarSdk.Contract(activeContractId);
                 
-                // ======== PERBAIKAN TIPE DATA RUST ========
-                // Address memakai tipe 'address', bukan 'string'
-                const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'address' });
-                const targetScVal = StellarSdk.nativeToScVal(target, { type: 'address' });
+                // ======== PERBAIKAN TIPE DATA ========
+                // Kita kembalikan ke tipe 'string' dan 'u64' agar cocok persis dengan lib.rs
+                const senderScVal = StellarSdk.nativeToScVal(userPublicKey, { type: 'string' });
+                const targetScVal = StellarSdk.nativeToScVal(target, { type: 'string' });
                 
-                // Amount memakai tipe 'i128' standar koin Soroban
                 const amountInStroops = Math.floor(parseFloat(amount) * 10000000);
-                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'i128' });
+                const amountScVal = StellarSdk.nativeToScVal(amountInStroops, { type: 'u64' });
                 
                 const messageScVal = StellarSdk.nativeToScVal("Donation via Web3 dApp", { type: 'string' });
                 // ==========================================
