@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web3 Tipping dApp - Stellar Soroban</title>
     
+    <!-- STELLAR SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/12.2.0/stellar-sdk.min.js"></script>
+    
+    <!-- GREEN BELT REQUIREMENT: VERCEL WEB ANALYTICS -->
+    <script defer src="/_vercel/insights/script.js"></script>
     
     <style>
         body {
@@ -91,14 +95,38 @@
         .history-list { list-style: none; padding: 0; margin: 0; }
         .history-item { background-color: #1a1a1a; padding: 10px; border-radius: 5px; margin-bottom: 5px; font-size: 12px; border-left: 3px solid #f1c40f; }
 
-        @media (max-width: 850px) { .grid-layout { grid-template-columns: 1fr; } }
+        /* GREEN BELT REQUIREMENT: Feedback Section UI */
+        .feedback-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+        .btn-feedback {
+            display: inline-block;
+            background-color: #2ecc71;
+            color: #121212;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .btn-feedback:hover { background-color: #27ae60; }
+
+        /* GREEN BELT REQUIREMENT: Mobile Responsiveness */
+        @media (max-width: 850px) { 
+            .grid-layout { grid-template-columns: 1fr; } 
+            .container { padding: 20px; border-radius: 10px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>💰 Web3 Tipping dApp (Soroban)</h2>
-        <p class="subtitle">Support creators via Stellar Smart Contracts</p>
+        <h2>💰 Saweria3 dApp (Soroban)</h2>
+        <p class="subtitle">Decentralized micro-tipping for SEA Creators</p>
 
         <div class="grid-layout">
             <div class="grid-col">
@@ -174,6 +202,15 @@
                 </div>
             </div>
         </div>
+
+        <!-- GREEN BELT REQUIREMENT: User Feedback Collection -->
+        <div class="feedback-section">
+            <p style="color: #aaa; font-size: 13px; margin-bottom: 10px;">Help us improve Saweria3 by validating our MVP!</p>
+            <a href="LINK_GOOGLE_FORM_ANDA_DISINI" target="_blank" class="btn-feedback">
+                📝 Give Feedback (Takes 1 Min)
+            </a>
+        </div>
+
     </div>
 
     <script type="module">
