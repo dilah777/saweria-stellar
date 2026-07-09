@@ -42,12 +42,12 @@ Access the live application here: https://saweria-stellar.vercel.app
 🎬 Video Demo
 Watch the full demonstration of SaweriaStellar, including wallet connection, contract execution, and transaction tracking on the network:
 
-Video Link: SaweriaStellar - Soroban Smart Contract Demo
+Video Link: https://youtu.be/1jdVgbt5NX4?si=G_DpdQROunQYgIxm
 
 📝 MVP Validation & User Feedback
 As part of our commitment to building a user-centric dApp, we are actively collecting feedback on our Minimum Viable Product (MVP). If you have tested the application on the Stellar Testnet, please take 1 minute to share your experience!
 
-Submit Feedback: SaweriaStellar User Feedback Form
+Submit Feedback: https://docs.google.com/forms/d/e/1FAIpQLSefPhrZqo3P4AsimDYsabEPIUP1NMJgjhsw_JnFL8QQAqSOUw/viewform?usp=header
 
 🚀 How to Run Locally
 Clone this repository.
